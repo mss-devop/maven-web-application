@@ -24,7 +24,6 @@ try{
   sh "${mavenHome}/bin/mvn package"
   }
   
-  /*
   stage('ExecuteSoanrQubeReport')
   {
   sh "${mavenHome}/bin/mvn clean sonar:sonar"
@@ -42,7 +41,7 @@ try{
      
   }
   }
-  */
+  
   }//try closing
   catch(e){
   currentBuild.result="FAILURE"
