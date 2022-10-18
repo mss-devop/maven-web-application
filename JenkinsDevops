@@ -49,7 +49,7 @@ try{
   throw e
   }//catch closing
   finally{
-  slackNotifications(currentBuild.result)
+  sendSlackNotifications(currentBuild.result)
   }
 } //Node closing
 
