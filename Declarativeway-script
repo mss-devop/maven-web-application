@@ -8,6 +8,14 @@ tools
 {
 maven 'maven3.8.6'
 }
+triggers {
+  pollSCM('* * * * *')
+  //cron('* * * * *')
+}
+options {
+  buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
+  timestamps()
+}
 //To get the source code
 stages
 {
@@ -54,30 +62,27 @@ steps
 }
 }
 }
+}//stage closing
+post {
+  aborted {
+    slackNotifications(currentBuild.result)
+  }
+  success {
+    slackNotifications(currentBuild.result)
+  }
+  failure {
+   slackNotifications(currentBuild.result)
+  }
 }
-post
-{
-aborted
-{
-slackNotifications(currentBuild.results)
-}
-success
-{
-slackNotifications(currentBuild.results)
-}
-failure
-{
-slackNotifications(currentBuild.results)
-}
-}
-}
+}//pipline closing
+
 //Code Snippet for sending slack notifications.
 
-def slackNotifications(String buildStatus = 'STARTED') 
-{
+def slackNotifications(String buildStatus = 'STARTED') {
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESS'
- 
+  
+
   // Default values
   def colorName = 'RED'
   def colorCode = '#FF0000'
@@ -86,8 +91,8 @@ def slackNotifications(String buildStatus = 'STARTED')
 
   // Override default values based on build status
   if (buildStatus == 'STARTED') {
-    colorName = 'ORANGE'
-    colorCode = '#FFA500'
+    colorName = 'YELLOW'
+    colorCode = '#FFFF00'
   } else if (buildStatus == 'SUCCESS') {
     colorName = 'GREEN'
     colorCode = '#00FF00'
@@ -97,6 +102,5 @@ def slackNotifications(String buildStatus = 'STARTED')
   }
 
   // Send notifications
-  slackSend (color: colorCode, message: summary, channel: "#walmart")
+  slackSend (color: colorCode, message: summary, channel: '#walmart')
 }
-
