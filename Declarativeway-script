@@ -74,7 +74,7 @@ post {
 }//pipline closing
 
 //Code Snippet for sending slack notifications.
-
+/*
 def slackNotifications(String buildStatus = 'STARTED') {
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESS'
@@ -101,3 +101,4 @@ def slackNotifications(String buildStatus = 'STARTED') {
   // Send notifications
   slackSend (color: colorCode, message: summary, channel: '#walmart')
 }
+*/
