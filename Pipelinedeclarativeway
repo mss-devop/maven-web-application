@@ -1,0 +1,102 @@
+pipeline
+{
+agent{
+    label 'walmartnode'
+}
+
+tools
+{
+maven 'maven3.8.6'
+}
+//To get the source code
+stages
+{
+stage('Checkout')
+{
+steps
+{
+//slackNotifications('STARTED')
+git branch: 'development', credentialsId: '46a17e4b-4de7-4fad-be87-f44ffe982d27', url: 'https://github.com/mss-devop/maven-web-application.git'
+}
+}
+//Build
+stage('build')
+{
+steps
+{
+sh "mvn clean package"
+}
+}
+//Execute Sonarqube report
+stage('ExecuteSonarqubeReport')
+{
+steps
+{
+sh "mvn sonar:sonar"
+}
+}
+//Uploading Artifacts into nexus server
+stage('NexusServer')
+{
+steps
+{
+sh "mvn deploy"
+}
+}
+//Deploying to the Tomacat server
+stage('DeployingTotheTomcatServer')
+{
+steps
+{
+  sshagent(['e611557b-932e-4085-bbe0-b2b48a90dc6c']) {
+   
+  sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@172.31.8.172:/opt/apache-tomcat-9.0.65/webapps/"
+}
+}
+}
+}
+post
+{
+aborted
+{
+slackNotifications(currentBuild.results)
+}
+success
+{
+slackNotifications(currentBuild.results)
+}
+failure
+{
+slackNotifications(currentBuild.results)
+}
+}
+}
+//Code Snippet for sending slack notifications.
+
+def slackNotifications(String buildStatus = 'STARTED') 
+{
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESS'
+ 
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    colorName = 'ORANGE'
+    colorCode = '#FFA500'
+  } else if (buildStatus == 'SUCCESS') {
+    colorName = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    colorName = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary, channel: "#walmart")
+}
+
