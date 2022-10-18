@@ -1,4 +1,4 @@
-@Library('sharedlibmss') _
+@Library('sharedlibsmss') _
 node{
 
 try{
