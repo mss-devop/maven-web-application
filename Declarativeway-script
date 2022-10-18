@@ -1,3 +1,4 @@
+@library('sharedlibsmss') _
 pipeline
 {
 agent any
@@ -20,7 +21,7 @@ stage('Checkout')
 {
 steps
 {
-//slackNotifications('STARTED')
+sendSlackNotifications('STARTED')
 git branch: 'development', credentialsId: '46a17e4b-4de7-4fad-be87-f44ffe982d27', url: 'https://github.com/mss-devop/maven-web-application.git'
 }
 }
@@ -62,13 +63,13 @@ steps
 }//stage closing
 post {
   aborted {
-    slackNotifications(currentBuild.result)
+    sendSlackNotifications(currentBuild.result)
   }
   success {
-    slackNotifications(currentBuild.result)
+    sendSlackNotifications(currentBuild.result)
   }
   failure {
-   slackNotifications(currentBuild.result)
+   sendSlackNotifications(currentBuild.result)
   }
 }
 }//pipline closing
