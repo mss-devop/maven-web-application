@@ -1,8 +1,9 @@
+@Library('sharedlibmss') _
 node{
 
 try{
 
-  slackNotifications('STARTED')
+  sendSlackNotifications('STARTED')
  def mavenHome = tool name: 'maven3.8.6'
  
  echo "The JobName is: ${env.JOB_NAME}" 
@@ -53,7 +54,7 @@ try{
 } //Node closing
 
 //Code Snippet for sending slack notifications.
-
+/*
 def slackNotifications(String buildStatus = 'STARTED') {
   // build status of null means successful
   buildStatus =  buildStatus ?: 'SUCCESS'
@@ -80,3 +81,4 @@ def slackNotifications(String buildStatus = 'STARTED') {
   // Send notifications
   slackSend (color: colorCode, message: summary, channel: "#walmart")
 }
+*/
