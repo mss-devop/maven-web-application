@@ -1,4 +1,4 @@
-@library('sharedlibsmss') _
+@Library('sharedlibsmss') _
 pipeline
 {
 agent any
